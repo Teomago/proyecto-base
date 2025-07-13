@@ -65,3 +65,140 @@ That's it! The Docker instance will help you get up and running quickly while al
 ## Questions
 
 If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+
+## Prompt para Documentación Continua
+
+1. **Fase Completada**: Cuando completes una fase o lo indique explícitamente, agrega al `README.md` una sección que documente los pasos realizados.
+2. **Formato**:
+   - Título de la sección: Debe reflejar la fase completada (e.g., "Instalación de HeroUI", "Configuración de Autenticación").
+   - Descripción: Breve introducción sobre lo que se logró en esta fase.
+   - Pasos: Lista detallada de comandos, configuraciones y archivos modificados.
+   - Verificación: Instrucciones para probar que la fase funciona correctamente.
+3. **Estructura**:
+   - Usa encabezados `###` o `####` para mantener consistencia con el resto del archivo.
+   - Incluye ejemplos de código o comandos en bloques de código.
+   - Asegúrate de que el contenido sea claro y fácil de seguir.
+4. **Ubicación**: Agrega la nueva sección al final del archivo `README.md`, justo después de la última fase documentada.
+
+## Configuración de Payload CMS con TailwindCSS
+
+A continuación, se detalla el proceso que hemos seguido para configurar Payload CMS con TailwindCSS. Este paso a paso incluye comandos CLI, configuraciones necesarias y ajustes en los archivos.
+
+---
+
+#### **1. Crear un Proyecto Base con Payload CMS**
+1. Instalar el CLI de Payload:
+   ```bash
+   npx create-payload-app@latest proyecto-base
+   ```
+   - Seleccionar la plantilla deseada (por ejemplo, "blank" o "blog").
+
+2. Navegar al directorio del proyecto:
+   ```bash
+   cd proyecto-base
+   ```
+
+3. Instalar las dependencias:
+   ```bash
+   pnpm install
+   ```
+
+---
+
+#### **2. Configurar TailwindCSS**
+1. Instalar TailwindCSS y PostCSS:
+   ```bash
+   pnpm install tailwindcss@3.4.17 postcss@8.4.24 autoprefixer@10.4.14
+   ```
+
+2. Inicializar la configuración de TailwindCSS:
+   ```bash
+   npx tailwindcss init -p
+   ```
+   Esto generará los archivos `tailwind.config.js` y `postcss.config.js`.
+
+3. Configurar `tailwind.config.js`:
+   - Editar el archivo para incluir las rutas de los archivos de Payload y Next.js:
+     ```js
+     module.exports = {
+       content: [
+         './src/**/*.{js,ts,jsx,tsx}',
+         './src/app/**/*.{js,ts,jsx,tsx}',
+         './src/collections/**/*.ts',
+         './src/app/(payload)/**/*.tsx',
+       ],
+       theme: {
+         extend: {},
+       },
+       plugins: [],
+     }
+     ```
+
+4. Configurar `postcss.config.js`:
+   - Asegurarse de que Tailwind y Autoprefixer estén configurados:
+     ```js
+     module.exports = {
+       plugins: {
+         tailwindcss: {},
+         autoprefixer: {},
+       },
+     }
+     ```
+
+5. Crear un archivo de estilos base:
+   - En `src/app/(frontend)/styles.css`:
+     ```css
+     @tailwind base;
+     @tailwind components;
+     @tailwind utilities;
+     ```
+
+6. Importar los estilos en el frontend:
+   - En `src/app/(frontend)/page.tsx`:
+     ```tsx
+     import './styles.css';
+     ```
+
+---
+
+#### **3. Configurar TailwindCSS en el Área de Administración de Payload**
+1. Crear un archivo SCSS para los estilos de administración:
+   - En `src/app/(payload)/custom.scss`:
+     ```scss
+     @tailwind base;
+     @tailwind components;
+     @tailwind utilities;
+     ```
+
+2. Configurar Payload para usar los estilos:
+   - En `payload.config.ts`, agregar la referencia al archivo SCSS:
+     ```ts
+     import path from 'path';
+
+     export default {
+       admin: {
+         css: path.resolve(__dirname, './app/(payload)/custom.scss'),
+       },
+       // ...otras configuraciones
+     };
+     ```
+
+3. Asegurarse de que PostCSS procese los archivos SCSS:
+   - Verificar que `postcss.config.js` esté configurado correctamente.
+
+---
+
+#### **4. Verificar el Funcionamiento**
+1. Iniciar el servidor de desarrollo:
+   ```bash
+   pnpm dev
+   ```
+
+2. Acceder al frontend y al panel de administración:
+   - Frontend: `http://localhost:3000`
+   - Admin: `http://localhost:3000/admin`
+
+---
+
+### Próximos Pasos: Instalación de HeroUI
+Con TailwindCSS funcionando correctamente, el siguiente paso será instalar HeroUI y configurar sus componentes.
