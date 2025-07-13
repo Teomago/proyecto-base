@@ -80,125 +80,133 @@ If you have any issues or questions, reach out to us on [Discord](https://discor
    - Asegúrate de que el contenido sea claro y fácil de seguir.
 4. **Ubicación**: Agrega la nueva sección al final del archivo `README.md`, justo después de la última fase documentada.
 
-## Configuración de Payload CMS con TailwindCSS
+# Proyecto Base
 
-A continuación, se detalla el proceso que hemos seguido para configurar Payload CMS con TailwindCSS. Este paso a paso incluye comandos CLI, configuraciones necesarias y ajustes en los archivos.
+Este proyecto utiliza **Payload CMS** y **Tailwind CSS** como base para el desarrollo de aplicaciones web modernas.
 
----
+## Instalación de Tailwind CSS
 
-#### **1. Crear un Proyecto Base con Payload CMS**
-1. Instalar el CLI de Payload:
-   ```bash
-   npx create-payload-app@latest proyecto-base
-   ```
-   - Seleccionar la plantilla deseada (por ejemplo, "blank" o "blog").
+1. Asegúrate de tener `Node.js` y `pnpm` instalados en tu sistema.
+2. Instala las dependencias del proyecto:
 
-2. Navegar al directorio del proyecto:
-   ```bash
-   cd proyecto-base
-   ```
-
-3. Instalar las dependencias:
    ```bash
    pnpm install
    ```
 
----
+3. Configura Tailwind CSS:
+   - El archivo de configuración de Tailwind CSS se encuentra en `tailwind.config.js`.
+   - Asegúrate de que las rutas de contenido estén correctamente configuradas para procesar las clases CSS.
 
-#### **2. Configurar TailwindCSS**
-1. Instalar TailwindCSS y PostCSS:
+4. Ejecuta el servidor de desarrollo:
+
    ```bash
-   pnpm install tailwindcss@3.4.17 postcss@8.4.24 autoprefixer@10.4.14
+   pnpm dev
    ```
 
-2. Inicializar la configuración de TailwindCSS:
-   ```bash
-   npx tailwindcss init -p
-   ```
-   Esto generará los archivos `tailwind.config.js` y `postcss.config.js`.
+## Estructura del Proyecto
 
-3. Configurar `tailwind.config.js`:
-   - Editar el archivo para incluir las rutas de los archivos de Payload y Next.js:
-     ```js
+- `src/`: Contiene el código fuente del proyecto.
+- `payload.config.ts`: Configuración principal de Payload CMS.
+- `tailwind.config.js`: Configuración de Tailwind CSS.
+
+## Payload CMS
+
+Payload CMS es un CMS headless que permite gestionar contenido dinámico y relaciones complejas en la base de datos. Este proyecto utiliza Payload CMS para:
+
+- **Gestión de contenido**: Crear y administrar colecciones de datos.
+- **Autenticación**: Manejo de usuarios y roles.
+- **API REST y GraphQL**: Exponer datos para el front-end.
+
+Para más información, visita la [documentación oficial de Payload CMS](https://payloadcms.com/docs).
+
+## Instalación de HeroUI
+
+HeroUI se integró en este proyecto para proporcionar componentes de interfaz de usuario modernos y personalizables. A continuación, se describen los pasos realizados para su instalación y configuración:
+
+#### Descripción
+Se instaló HeroUI junto con Tailwind CSS para mejorar la experiencia de desarrollo del front-end. Se configuró el proveedor de HeroUI en el layout principal del proyecto.
+
+#### Pasos
+1. **Instalación de Dependencias**:
+   - Se instalaron las dependencias necesarias utilizando `npm`:
+     ```bash
+     npm install @heroui/react framer-motion
+     ```
+
+2. **Configuración de `.npmrc`**:
+   - Se agregó la siguiente línea al archivo `.npmrc` para permitir el hoisting de los paquetes de HeroUI:
+     ```
+     public-hoist-pattern[]=@heroui/*
+     ```
+   - Luego, se ejecutó el siguiente comando para instalar las dependencias con `pnpm`:
+     ```bash
+     pnpm install
+     ```
+
+3. **Solución de Errores de `pnpm`**:
+   - Para solucionar el error `ERR_PNPM_NO_GLOBAL_BIN_DIR`, se actualizó `pnpm` utilizando `npm`:
+     ```bash
+     npm install -g pnpm
+     ```
+   - Posteriormente, se ejecutó:
+     ```bash
+     pnpm setup
+     ```
+   - Fue necesario cerrar y volver a abrir VSCode para aplicar los cambios.
+
+4. **Configuración de Tailwind CSS**:
+   - Se actualizó el archivo `tailwind.config.js` para incluir las rutas de HeroUI:
+     ```javascript
      module.exports = {
-       content: [
-         './src/**/*.{js,ts,jsx,tsx}',
-         './src/app/**/*.{js,ts,jsx,tsx}',
-         './src/collections/**/*.ts',
-         './src/app/(payload)/**/*.tsx',
-       ],
+       content: ['./src/**/*.{js,ts,jsx,tsx}', './node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}'],
        theme: {
          extend: {},
        },
-       plugins: [],
+       darkMode: 'class',
+       plugins: [require('@heroui/react')],
+     };
+     ```
+
+5. **Configuración del Proveedor de HeroUI**:
+   - Se agregó el `HeroUIProvider` en el archivo `layout.tsx` del front-end para que envuelva toda la aplicación:
+     ```tsx
+     import { HeroUIProvider } from '@heroui/react';
+
+     export default function RootLayout({ children }: { children: React.ReactNode }) {
+       return (
+         <html lang="en">
+           <body>
+             <HeroUIProvider>
+               {children}
+             </HeroUIProvider>
+           </body>
+         </html>
+       );
      }
      ```
 
-4. Configurar `postcss.config.js`:
-   - Asegurarse de que Tailwind y Autoprefixer estén configurados:
-     ```js
-     module.exports = {
-       plugins: {
-         tailwindcss: {},
-         autoprefixer: {},
-       },
-     }
-     ```
+6. **Prueba de Componentes**:
+   - Se probó el funcionamiento de HeroUI creando un componente `Card` en la página principal (`page.tsx`).
 
-5. Crear un archivo de estilos base:
-   - En `src/app/(frontend)/styles.css`:
+7. **Optimización de Estilos**:
+   - Se eliminaron los estilos personalizados de `styles.css`, dejando únicamente las importaciones de Tailwind CSS:
      ```css
      @tailwind base;
      @tailwind components;
      @tailwind utilities;
      ```
+   - Los estilos de la página principal se tradujeron a clases de Tailwind CSS.
 
-6. Importar los estilos en el frontend:
-   - En `src/app/(frontend)/page.tsx`:
-     ```tsx
-     import './styles.css';
+#### Verificación
+- Para verificar que HeroUI está funcionando correctamente:
+  1. Inicia el servidor de desarrollo:
+     ```bash
+     pnpm dev
      ```
+  2. Abre la aplicación en el navegador y verifica que los componentes de HeroUI se renderizan correctamente.
+  3. Asegúrate de que los estilos de Tailwind CSS se aplican correctamente en toda la aplicación.
 
----
+## Notas
 
-#### **3. Configurar TailwindCSS en el Área de Administración de Payload**
-1. Crear un archivo SCSS para los estilos de administración:
-   - En `src/app/(payload)/custom.scss`:
-     ```scss
-     @tailwind base;
-     @tailwind components;
-     @tailwind utilities;
-     ```
+Este proyecto está diseñado para ser una base flexible y extensible para diferentes tipos de aplicaciones web.
 
-2. Configurar Payload para usar los estilos:
-   - En `payload.config.ts`, agregar la referencia al archivo SCSS:
-     ```ts
-     import path from 'path';
-
-     export default {
-       admin: {
-         css: path.resolve(__dirname, './app/(payload)/custom.scss'),
-       },
-       // ...otras configuraciones
-     };
-     ```
-
-3. Asegurarse de que PostCSS procese los archivos SCSS:
-   - Verificar que `postcss.config.js` esté configurado correctamente.
-
----
-
-#### **4. Verificar el Funcionamiento**
-1. Iniciar el servidor de desarrollo:
-   ```bash
-   pnpm dev
-   ```
-
-2. Acceder al frontend y al panel de administración:
-   - Frontend: `http://localhost:3000`
-   - Admin: `http://localhost:3000/admin`
-
----
-
-### Próximos Pasos: Instalación de HeroUI
-Con TailwindCSS funcionando correctamente, el siguiente paso será instalar HeroUI y configurar sus componentes.
